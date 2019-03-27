@@ -15,6 +15,10 @@ endId = int(4000000) + (amountFiles + 1) * 10000 - 1
 fileName = 'task' + str(startId) + '-' + str(endId) + '.csv'  # 根据范围设定新csv文件名。
 with open(fileName, 'a') as csvfile:  # 创建文件，添加第一行任务属性
     spanwriter = csv.writer(csvfile, dialect='excel')
+    # spanwriter.writerow(
+    #     ['编号', '项目名称', '成交与否', '成交价', '中标方', '预算', '任务类型', '类型层1', '类型层2', '类型层3', '类型层4', '类型层5', '交易模式', '赏金分配',
+    #      '要求资格', '资格1', '资格2', '资格3', '资格4', '资格5', '开始时间', '交易步骤1', '时间1', '交易步骤2', '时间2', '交易步骤3', '时间3', '交易步骤4',
+    #      '时间4', '交易步骤5', '时间5', '交易步骤6', '时间6', '交易步骤7', '时间7', '具体要求', '雇主地址', '地址层1', '地址层2', ])
     spanwriter.writerow(
         ['编号', '项目名称', '成交与否', '成交价', '中标方', '预算', '任务类型', '类型层1', '类型层2', '类型层3', '类型层4', '类型层5', '交易模式', '赏金分配',
          '要求资格', '资格1', '资格2', '资格3', '资格4', '资格5', '开始时间', '交易步骤1', '时间1', '交易步骤2', '时间2', '交易步骤3', '时间3', '交易步骤4',
@@ -29,7 +33,7 @@ headers = {
 }  # 用chrome浏览器登录后,利用开发者工具查看NetWork主页面分析获取的headers。
 
 for num in range(startId, endId + 1):  # 按编号抓取所有任务。
-    url = 'http://task.zhubajie.com/' + str(num) + '/'
+    url = 'http://task.zbj.com/' + str(num) + '/'
     req = urllib2.Request(url, headers=headers)  # 在HTTP Request请求中添加headers以模拟登录。
     try:  # 忽略异常。
         page = urllib2.urlopen(req, timeout=10).read()  # 发送请求读取页面，设置等待10秒超时。
@@ -43,9 +47,9 @@ for num in range(startId, endId + 1):  # 按编号抓取所有任务。
             print(h)  # 无效任务打印None
 
         if h != None:  # 排除无效任务。
-            h = h.string.encode('utf8')
+            # h = h.string.encode('utf8')
 
-            if soup.find_all("div", class_="task-trunover-price"):  # 已成交任务。
+            if soup.find_all("div", class_="money"):  # 已成交任务。
                 print(str(num) + ' ' + h.strip())  # 打印已成交任务编号。
                 donePrice = soup.find_all("div", class_="task-trunover-price")[0].span.string.encode('utf8')  # 获取成交价。
                 successor = soup.find_all("div", class_="task_reward")[0].a.text.encode('utf8')  # 获取中标方。
@@ -220,4 +224,4 @@ for num in range(startId, endId + 1):  # 按编号抓取所有任务。
                          step5Date, step6Content, step6Date, step7Content, step7Date, descript, address, ads1, ads2])
                 csvfile.close
     except:
-pass
+        pass
